@@ -1,0 +1,186 @@
+NAME
+    Business::Colissimo - Shipping labels for ColiPoste
+
+VERSION
+    Version 0.0001
+
+SYNOPSIS
+        use Business::Colissimo;
+
+        $colissimo = Business::Colissimo->new(mode => 'access');
+
+        # customer number
+        $colissimo->customer_number('900001');
+
+        # parcel number from your alloted range of numbers
+        $colissimo->parcel_number('2052475203');
+
+        # postal code for recipient
+        $colissimo->postal_code('72240');
+
+        # add weight in grams
+        $colissimo->weight(250);
+
+        # not mechanisable option
+        $colissimo->not_mechanisable(1);
+    
+        # cash on delivery option (expert mode only)
+        $colissimo->cod(1);
+
+        # insurance level (expert mode only)
+        $colissimo->level('01');
+
+        # recommendation level (expert mode only)
+        $colissimo->level('21');
+
+METHODS
+  new
+        $colissimo = Business::Colissimo->new(mode => 'access',
+             customer_number => '900001',
+             parcel_number => '2052475203',
+             postal_code => '72240',
+             weight => 250);
+
+        $colissimo = Business::Colissimo->new(mode => 'expert',
+             customer_number => '900001',
+             parcel_number => '2052475203',
+             postal_code => '72240',
+             weight => 250,
+             cod => 1,
+             level => '01');
+
+  barcode
+    Produces the tracking barcode:
+
+        $colissimo->barcode('tracking');
+
+    Produces the sorting barcode:
+
+        $colissimo->barcode('sorting');
+
+  barcode_image
+    Produces PNG image for tracking barcode:
+
+        $colissimo->barcode_image('tracking');
+
+    Produces PNG image for sorting barcode:
+
+        $colissimo->barcode_image('sorting');
+
+  customer_number
+    Get current customer number:
+
+        $colissimo->customer_number;
+
+    Set current customer number:
+
+        $colissimo->customer_number('900001');
+
+  parcel_number
+    Get current parcel number:
+
+        $colissimo->parcel_number;
+    
+    Set current parcel number:
+
+        $colissimo->parcel_number('2052475203');
+
+  postal_code
+    Get current postal code:
+
+        $colissimo->postal_code
+
+    Set current postal code:
+
+        $colissimo->postal_code('72240');
+
+  weight
+    Get current weight:
+
+       $colissimo->weight;
+
+    Set weight in grams:
+
+       $colissimo->weight(250);
+
+  not_mechanisable
+    Get current value of not mechanisable option:
+
+        $colissimo->not_mechanisable;
+
+    Set current value of not mechanisable option:
+
+        $colissimo->not_mechanisable(1);
+
+    Possible values are 0 (No) and 1 (Yes).
+
+  cod
+    Get current value of cash on delivery option:
+
+        $colissimo->cod;
+
+    Set current value of cash on delivery option:
+
+        $colissimo->cod(1);
+
+    The cash on delivery option is available only in export mode, possible
+    values are 0 (No) and 1 (Yes).
+
+  level
+    Get current insurance resp. recommendation level:
+
+        $colissimo->level;
+
+    Set current insurance resp. recommendation level:
+
+        $colissimo->level('O1');
+        $colissimo->level('21');
+
+    The level option is only available in expert mode, possible values are
+    01 ... 10 for insurance level and 21 ... 23 for recommendation level.
+
+  control_key
+    Returns control key for barcode.
+
+AUTHOR
+    Stefan Hornburg (Racke), `<racke at linuxia.de>'
+
+BUGS
+    Please report any bugs or feature requests to `bug-business-colissimo at
+    rt.cpan.org', or through the web interface at
+    http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Business-Colissimo. I
+    will be notified, and then you'll automatically be notified of progress
+    on your bug as I make changes.
+
+SUPPORT
+    You can find documentation for this module with the perldoc command.
+
+        perldoc Business::Colissimo
+
+    You can also look for information at:
+
+    * RT: CPAN's request tracker (report bugs here)
+        http://rt.cpan.org/NoAuth/Bugs.html?Dist=Business-Colissimo
+
+    * AnnoCPAN: Annotated CPAN documentation
+        http://annocpan.org/dist/Business-Colissimo
+
+    * CPAN Ratings
+        http://cpanratings.perl.org/d/Business-Colissimo
+
+    * Search CPAN
+        http://search.cpan.org/dist/Business-Colissimo/
+
+ACKNOWLEDGEMENTS
+    Thanks to Ton Verhagen for being a big supporter of my projects in all
+    aspects.
+
+LICENSE AND COPYRIGHT
+    Copyright 2011 Stefan Hornburg (Racke).
+
+    This program is free software; you can redistribute it and/or modify it
+    under the terms of either: the GNU General Public License as published
+    by the Free Software Foundation; or the Artistic License.
+
+    See http://dev.perl.org/licenses/ for more information.
+
