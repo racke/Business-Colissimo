@@ -12,9 +12,9 @@ if ($@) {
     plan skip_all => "Missing Image::Size module.";
 }
 
-plan tests => 6;
+plan tests => 9;
 
-my ($colissimo, $tracking, $sorting, @info);
+my ($colissimo, $tracking, $sorting, $arbitrary, @info);
 
 $colissimo = Business::Colissimo->new(mode => 'access',
     parcel_number => '0123456789',
@@ -41,3 +41,11 @@ ok ($info[0] > 1, 'sorting barcode image width');
 ok ($info[1] > 1, 'sorting barcode image height');
 ok ($info[2] eq 'PNG', 'sorting barcode image format'); 
 
+# check size and format of arbitrary barcode
+$arbitrary = $colissimo->barcode_image('8L20524752032');
+
+@info = imgsize(\$arbitrary);
+
+ok ($info[0] > 1, 'arbitrary barcode image width');
+ok ($info[1] > 1, 'arbitrary barcode image height');
+ok ($info[2] eq 'PNG', 'arbitrary barcode image format'); 

@@ -187,14 +187,23 @@ Produces PNG image for sorting barcode:
 
     $colissimo->barcode_image('sorting');
 
+Produces PNG image for arbitrary barcode:
+
+    $colissimo->barcode_image('8L20524752032');
+
 =cut
 
 sub barcode_image {
     my ($self, $type, %args) = @_;
     my ($barcode, $image, $code128, $png);
 
-    $barcode = $self->barcode($type);
-    
+    if ($type eq 'tracking' || $type eq 'sorting') {
+	$barcode = $self->barcode($type);
+    }
+    else {
+	$barcode = $type;
+    }
+
     $code128 = Barcode::Code128->new;
     $code128->show_text(0);
 
