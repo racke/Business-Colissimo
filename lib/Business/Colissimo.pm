@@ -475,6 +475,18 @@ sub control_key {
     return $mod ? 10 - $mod : 0;
 }
 
+=head2 logo
+
+Returns logo file name for selected service.
+
+=cut
+
+sub logo {
+    my $self = shift;
+
+    return $logo_files{$self->{mode}} . '.bmp';
+}
+
 =head1 AUTHOR
 
 Stefan Hornburg (Racke), C<< <racke at linuxia.de> >>
