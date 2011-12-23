@@ -16,7 +16,7 @@ plan tests => 9;
 
 my ($colissimo, $tracking, $sorting, $arbitrary, @info);
 
-$colissimo = Business::Colissimo->new(mode => 'access',
+$colissimo = Business::Colissimo->new(mode => 'access_f',
     parcel_number => '0123456789',
     postal_code => '72240',
     customer_number => '900001',

@@ -18,7 +18,7 @@ Version 0.0001
 
 our $VERSION = '0.0001';
 
-my %product_codes = (access => '8L', expert => '8V');
+my %product_codes = (access_f => '8L', expert_f => '8V', expert_om => '7A');
 my %attributes = (parcel_number => 'parcel number', 
 		  postal_code => 'postal code', 
 		  customer_number => 'customer number',
@@ -30,11 +30,17 @@ my %attributes = (parcel_number => 'parcel number',
 		  level => 'insurance/recommendation level',
     );
 
+my %logo_files = (access_f => 'AccessF',
+		  expert_f => 'ExpertF',
+		  expert_om => 'ExpertOM',
+		  expert_i => 'ExpertInter',
+    );
+
 =head1 SYNOPSIS 
 
     use Business::Colissimo;
 
-    $colissimo = Business::Colissimo->new(mode => 'access');
+    $colissimo = Business::Colissimo->new(mode => 'access_f');
 
     # customer number
     $colissimo->customer_number('900001');
@@ -60,17 +66,37 @@ my %attributes = (parcel_number => 'parcel number',
     # recommendation level (expert mode only)
     $colissimo->level('21');
 
+=head1 DESCRIPTION
+
+Business::Colissimo supports the following ColiPoste services:
+
+=over 4
+
+=item Access France
+    
+    $colissimo = Business::Colissimo->new(mode => 'access_f');
+
+=item Expert France
+
+    $colissimo = Business::Colissimo->new(mode => 'expert_f');
+
+=item Expert Outre Mer
+
+    $colissimo = Business::Colissimo->new(mode => 'expert_om');
+
+=back
+
 =head1 METHODS
 
 =head2 new
 
-    $colissimo = Business::Colissimo->new(mode => 'access',
+    $colissimo = Business::Colissimo->new(mode => 'access_f',
          customer_number => '900001',
          parcel_number => '2052475203',
          postal_code => '72240',
          weight => 250);
 
-    $colissimo = Business::Colissimo->new(mode => 'expert',
+    $colissimo = Business::Colissimo->new(mode => 'expert_f',
          customer_number => '900001',
          parcel_number => '2052475203',
          postal_code => '72240',
@@ -87,7 +113,7 @@ sub new {
     %args = @_;
 
     unless (defined $args{mode} && $product_codes{$args{mode}}) {
-	die 'Please select valid mode (either access or expert) for ', __PACKAGE__;
+	die 'Please select valid mode for ', __PACKAGE__;
     }
 
     $self = {mode => delete $args{mode},

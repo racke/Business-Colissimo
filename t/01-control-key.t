@@ -19,7 +19,7 @@ my %control_keys = (
 
 plan tests => scalar keys %control_keys;
 
-$colissimo = Business::Colissimo->new(mode => 'access');
+$colissimo = Business::Colissimo->new(mode => 'access_f');
 
 while (($name, $value) = each %control_keys) {
     $control_key = $colissimo->control_key($name);
