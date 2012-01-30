@@ -254,6 +254,7 @@ sub barcode_image {
     }
 
     $code128 = Barcode::Code128->new;
+    $code128->border(0);
     $code128->show_text(0);
 
     $png = $code128->png($barcode);
