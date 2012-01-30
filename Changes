@@ -1,5 +1,23 @@
 Revision history for Business::Colissimo
 
+0.0002 Mon Jan 30 11:46:13 2012 CET
+
+    [API CHANGES]
+
+    * Rename mode access to access_f and mode expert to expert_f.
+    * Add mode expert_oem.
+
+    [ENHANCEMENTS]
+
+    * Add spacing parameter to barcode method.
+    * Add logo method.
+    * Allow generation of barcode images for arbitrary barcodes.
+
+    [TESTS]
+
+    * Add test for size and format of barcode images.
+    * Update barcode tests with checks for exact barcode numbers.
+
 0.0001 Fri Nov 11 19:51:33 2011 CET
 
     * Initial release

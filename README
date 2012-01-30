@@ -2,12 +2,12 @@ NAME
     Business::Colissimo - Shipping labels for ColiPoste
 
 VERSION
-    Version 0.0001
+    Version 0.0002
 
 SYNOPSIS
         use Business::Colissimo;
 
-        $colissimo = Business::Colissimo->new(mode => 'access');
+        $colissimo = Business::Colissimo->new(mode => 'access_f');
 
         # customer number
         $colissimo->customer_number('900001');
@@ -33,15 +33,27 @@ SYNOPSIS
         # recommendation level (expert mode only)
         $colissimo->level('21');
 
+DESCRIPTION
+    Business::Colissimo supports the following ColiPoste services:
+
+    Access France
+            $colissimo = Business::Colissimo->new(mode => 'access_f');
+
+    Expert France
+            $colissimo = Business::Colissimo->new(mode => 'expert_f');
+
+    Expert Outre Mer
+            $colissimo = Business::Colissimo->new(mode => 'expert_om');
+
 METHODS
   new
-        $colissimo = Business::Colissimo->new(mode => 'access',
+        $colissimo = Business::Colissimo->new(mode => 'access_f',
              customer_number => '900001',
              parcel_number => '2052475203',
              postal_code => '72240',
              weight => 250);
 
-        $colissimo = Business::Colissimo->new(mode => 'expert',
+        $colissimo = Business::Colissimo->new(mode => 'expert_f',
              customer_number => '900001',
              parcel_number => '2052475203',
              postal_code => '72240',
@@ -54,9 +66,17 @@ METHODS
 
         $colissimo->barcode('tracking');
 
+    Same with proper spacing for the shipping label:
+
+        $colissimo->barcode('tracking', spacing => 1);
+
     Produces the sorting barcode:
 
         $colissimo->barcode('sorting');
+
+    Same with proper spacing for the shipping label:
+
+        $colissimo->barcode('sorting', spacing => 1);
 
   barcode_image
     Produces PNG image for tracking barcode:
@@ -66,6 +86,10 @@ METHODS
     Produces PNG image for sorting barcode:
 
         $colissimo->barcode_image('sorting');
+
+    Produces PNG image for arbitrary barcode:
+
+        $colissimo->barcode_image('8L20524752032');
 
   customer_number
     Get current customer number:
@@ -142,6 +166,9 @@ METHODS
   control_key
     Returns control key for barcode.
 
+  logo
+    Returns logo file name for selected service.
+
 AUTHOR
     Stefan Hornburg (Racke), `<racke at linuxia.de>'
 
@@ -176,7 +203,7 @@ ACKNOWLEDGEMENTS
     aspects.
 
 LICENSE AND COPYRIGHT
-    Copyright 2011 Stefan Hornburg (Racke).
+    Copyright 2011-2012 Stefan Hornburg (Racke).
 
     This program is free software; you can redistribute it and/or modify it
     under the terms of either: the GNU General Public License as published
