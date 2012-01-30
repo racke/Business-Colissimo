@@ -144,14 +144,22 @@ Produces the tracking barcode:
 
     $colissimo->barcode('tracking');
 
+Same with proper spacing for the shipping label:
+
+    $colissimo->barcode('tracking', spacing => 1);
+
 Produces the sorting barcode:
 
     $colissimo->barcode('sorting');
 
+Same with proper spacing for the shipping label:
+
+    $colissimo->barcode('sorting', spacing => 1);
+
 =cut
 
 sub barcode {
-    my ($self, $type) = @_;
+    my ($self, $type, %args) = @_;
     my ($barcode, $parcel_number, $control);
 
     $barcode = $product_codes{$self->{mode}};
@@ -193,11 +201,26 @@ sub barcode {
 	$control .= substr($self->parcel_number, 9, 1);
 	
 	$barcode .= $control . $self->control_key($control);
+
+	if ($args{spacing}) {
+	    return join(' ', substr($barcode, 0, 3),
+			substr($barcode, 3, 5),
+			substr($barcode, 8, 6),
+			substr($barcode, 14, 4),
+			substr($barcode, 18, 6));	   
+	}
     }
     else {
 	$parcel_number = $self->parcel_number;
 	$barcode .= $parcel_number;
 	$barcode .= $self->control_key($parcel_number);
+
+	if ($args{spacing}) {
+	    return join(' ', substr($barcode, 0, 2),
+			substr($barcode, 2, 5),
+			substr($barcode, 7, 5),
+			substr($barcode, 12, 1));
+	}
     }
 
     return $barcode;
