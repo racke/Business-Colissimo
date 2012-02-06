@@ -29,8 +29,9 @@ my %attributes = (parcel_number => 'parcel number',
 		  cod => 'cash on delivery',
 		  level => 'insurance/recommendation level',
 
-		  # scale
+		  # barcode image
 		  scale => 'barcode image scale factor',
+		  height => 'barcode image height',
     );
 
 my %logo_files = (access_f => 'AccessF',
@@ -69,8 +70,11 @@ my %logo_files = (access_f => 'AccessF',
     # recommendation level (expert mode only)
     $colissimo->level('21');
 
-    # set scale for barcode image (default: 1)
+    # set scale in pixels for barcode image (default: 1)
     $colissimo->scale(2);
+
+    # set height in pixels for barcode image (default: 77)
+    $colissimo->height(100);
 
 =head1 DESCRIPTION
 
@@ -132,8 +136,9 @@ sub new {
 	     cod => '0',
 	     level => '00',
 
-	     # barcode image scale
+	     # barcode image
 	     scale => 1,
+	     height => 77,
     };
 
     bless $self, $class;
@@ -273,7 +278,7 @@ module (narrowest element of the bar code) of
 
 sub barcode_image {
     my ($self, $type, %args) = @_;
-    my ($barcode, $image, $code128, $png, $scale);
+    my ($barcode, $image, $code128, $png, $scale, $height);
 
     if ($type eq 'tracking' || $type eq 'sorting') {
 	$barcode = $self->barcode($type);
@@ -288,6 +293,11 @@ sub barcode_image {
     # scale
     if ($scale = $self->{scale} || $args{scale}) {
 	$code128->scale($scale);
+    }
+
+    # height 
+    if ($height = $self->{height} || $args{height}) {
+	$code128->height($height);
     }
 
     $code128->show_text(0);
@@ -322,6 +332,35 @@ sub scale {
     }
 
     return $self->{scale};
+}
+
+=head2 height
+
+Get current height for barcode image:
+
+    $colissimo->height;
+
+Set current height for barcode image:
+
+    $colissimo->height(100);
+
+=cut
+
+sub height {
+    my $self = shift;
+    my $height;
+
+    if (@_ > 0 && defined $_[0]) {
+	$height = $_[0];
+
+	if ($height !~ /^\d+$/) {
+	    die 'Please provide valid height';
+	}
+
+	$self->{height} = $height;
+    }
+
+    return $self->{height};
 }
 
 =head2 customer_number
