@@ -28,6 +28,9 @@ my %attributes = (parcel_number => 'parcel number',
 		  # expert mode
 		  cod => 'cash on delivery',
 		  level => 'insurance/recommendation level',
+
+		  # scale
+		  scale => 'barcode image scale factor',
     );
 
 my %logo_files = (access_f => 'AccessF',
@@ -65,6 +68,9 @@ my %logo_files = (access_f => 'AccessF',
 
     # recommendation level (expert mode only)
     $colissimo->level('21');
+
+    # set scale for barcode image (default: 2)
+    $colissimo->scale(3);
 
 =head1 DESCRIPTION
 
@@ -125,6 +131,9 @@ sub new {
 	     # expert 
 	     cod => '0',
 	     level => '00',
+
+	     # barcode image scale
+	     scale => 2,
     };
 
     bless $self, $class;
@@ -244,7 +253,7 @@ Produces PNG image for arbitrary barcode:
 
 sub barcode_image {
     my ($self, $type, %args) = @_;
-    my ($barcode, $image, $code128, $png);
+    my ($barcode, $image, $code128, $png, $scale);
 
     if ($type eq 'tracking' || $type eq 'sorting') {
 	$barcode = $self->barcode($type);
@@ -255,9 +264,44 @@ sub barcode_image {
 
     $code128 = Barcode::Code128->new;
     $code128->border(0);
+
+    # scale
+    if ($scale = $self->{scale} || $args{scale}) {
+	$code128->scale($scale);
+    }
+
     $code128->show_text(0);
 
     $png = $code128->png($barcode);
+}
+
+=head2 scale
+
+Get current scale for barcode image:
+
+    $colissimo->scale;
+
+Set current scale for barcode image:
+
+    $colissimo->scale(3);
+
+=cut
+
+sub scale {
+    my $self = shift;
+    my $scale;
+
+    if (@_ > 0 && defined $_[0]) {
+	$scale = $_[0];
+
+	if ($scale !~ /^\d+$/) {
+	    die 'Please provide valid scale factor';
+	}
+
+	$self->{scale} = $scale;
+    }
+
+    return $self->{scale};
 }
 
 =head2 customer_number
