@@ -69,8 +69,8 @@ my %logo_files = (access_f => 'AccessF',
     # recommendation level (expert mode only)
     $colissimo->level('21');
 
-    # set scale for barcode image (default: 2)
-    $colissimo->scale(3);
+    # set scale for barcode image (default: 1)
+    $colissimo->scale(2);
 
 =head1 DESCRIPTION
 
@@ -133,7 +133,7 @@ sub new {
 	     level => '00',
 
 	     # barcode image scale
-	     scale => 2,
+	     scale => 1,
     };
 
     bless $self, $class;
@@ -248,6 +248,26 @@ Produces PNG image for sorting barcode:
 Produces PNG image for arbitrary barcode:
 
     $colissimo->barcode_image('8L20524752032');
+
+The scale of the image can be changed for each
+barcode individually:
+
+    $colissimo->barcode_image('8L20524752032', scale => 2);
+
+The default scale is set to 1, because that produces
+images with the right number of pixels to include them
+into PDF with L<PDF::API2>, which uses 72dpi resolution
+for images unless you specify width and height explicitly
+(see L<PDF::API2::Content>).
+
+The formula for calculating width in mm for a 72dpi
+resolution is as follows:
+
+    (1px * 25.4) / 72dpi
+
+This fits into Colissimo's requirement for the basic
+module (narrowest element of the bar code) of 
+0.33 to 0.375 mm.
 
 =cut
 
