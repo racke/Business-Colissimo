@@ -18,7 +18,27 @@ Version 0.0002
 
 our $VERSION = '0.0002';
 
-my %product_codes = (access_f => '8L', expert_f => '8V', expert_om => '7A');
+my %product_codes = (access_f => '8L', 
+		     expert_f => '8V', 
+		     expert_om => '7A', 
+		     expert_i => 'CY', 
+		     expert_i_kpg => 'EY'
+    );
+
+my %test_account = (access_f => '964744', 
+		    expert_f => '964744',
+		    expert_om => '964744', 
+		    expert_i => '964744', 
+		    expert_kpg => '900000',  
+    );
+
+my %test_ranges = (access_f => [qw/4139207826 4139212825/],
+		   expert_f => [qw/5649204247 5649209246/],
+		   expert_om => [qw/5389439016 5389444015/],
+		   expert_i => [qw/00005801 00055800/],
+		   expert_i_kpg => [qw/00000001 00051000/],
+		    );
+		   
 my %attributes = (parcel_number => 'parcel number', 
 		  postal_code => 'postal code', 
 		  customer_number => 'customer number',
@@ -32,6 +52,9 @@ my %attributes = (parcel_number => 'parcel number',
 		  # barcode image
 		  scale => 'barcode image scale factor',
 		  height => 'barcode image height',
+
+		  # testing
+		  test => 'testing',
     );
 
 my %logo_files = (access_f => 'AccessF',
@@ -58,9 +81,8 @@ my %logo_files = (access_f => 'AccessF',
     $colissimo->barcode('shipping', spacing => 1);
 
     # customer number
-    $colissimo->customer_number('900001');
-
-    # parcel number from your alloted range of numbers
+    $colissimo->customer_number('900001')
+    # parcel number from your alloted range numbers
     $colissimo->parcel_number('2052475203');
 
     # postal code for recipient
@@ -151,6 +173,9 @@ sub new {
 	     # barcode image
 	     scale => 1,
 	     height => 77,
+
+	     # testing
+	     test => 0,
     };
 
     bless $self, $class;
@@ -330,6 +355,29 @@ sub logo {
     my $self = shift;
 
     return $logo_files{$self->{mode}} . '.bmp';
+}
+
+=head2 test
+
+Toggles testing.
+
+    $colissimo->test(1);
+
+=cut
+
+sub test {
+    my $self = shift;
+
+    if (@_ > 0 && defined $_[0]) {
+	$self->{test} = $_[0];
+	
+	if ($self->{test} && ! $self->{customer_number}) {
+	    # use predefined customer number for tests
+	    $self->{customer_number} = $test_account{$self->{mode}};
+	}
+    }
+
+    return $self->{test};
 }
 
 =head2 scale
