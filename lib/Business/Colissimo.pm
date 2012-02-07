@@ -63,6 +63,20 @@ my %logo_files = (access_f => 'AccessF',
 		  expert_i => 'ExpertInter',
     );
 
+my %countries = (AU => {kpg => 1},
+		 BR => {kpg => 1},
+		 CN => {kpg => 1},
+		 HK => {kpg => 1},
+		 IL => {kpg => 1},
+		 JP => {kpg => 1},
+		 KR => {kpg => 1},
+		 MA => {kpg => 1},
+		 RU => {kpg => 1},
+		 SG => {kpg => 1},
+		 VN => {kpg => 1},
+		 US => {kpg => 1},
+    );
+
 =head1 SYNOPSIS 
 
     use Business::Colissimo;
@@ -127,6 +141,16 @@ for the following ColiPoste services:
 =item Expert Outre Mer
 
     $colissimo = Business::Colissimo->new(mode => 'expert_om');
+
+=item Expert International
+
+    KPG countries:
+
+    $colissimo = Business::Colissimo->new(mode => 'expert_i_kpg');
+
+    Countries outside of KPG:
+
+    $colissimo = Business::Colissimo->new(mode => 'expert_i');
 
 =back
 
