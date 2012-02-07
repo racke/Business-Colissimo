@@ -44,7 +44,18 @@ my %logo_files = (access_f => 'AccessF',
 
     use Business::Colissimo;
 
-    $colissimo = Business::Colissimo->new(mode => 'access_f');
+    $colissimo = Business::Colissimo->new(mode => 'access_f',
+                               customer_number => '900001',
+                               parcel_number => '2052475203',
+                               postal_code => '72240',
+                               weight => 120);
+
+    # get logo file name
+    $colissimo->logo;
+
+    # produce barcode images
+    $colissimo->barcode('tracking', spacing => 1);
+    $colissimo->barcode('shipping', spacing => 1);
 
     # customer number
     $colissimo->customer_number('900001');
@@ -78,7 +89,8 @@ my %logo_files = (access_f => 'AccessF',
 
 =head1 DESCRIPTION
 
-Business::Colissimo supports the following ColiPoste services:
+Business::Colissimo helps you to produce shipping labels
+for the following ColiPoste services:
 
 =over 4
 
@@ -303,6 +315,21 @@ sub barcode_image {
     $code128->show_text(0);
 
     $png = $code128->png($barcode);
+}
+
+
+=head2 logo
+
+Returns logo file name for selected service.
+
+    $colissimo->logo;
+
+=cut
+
+sub logo {
+    my $self = shift;
+
+    return $logo_files{$self->{mode}} . '.bmp';
 }
 
 =head2 scale
@@ -626,18 +653,6 @@ sub control_key {
     $mod = $key % 10;
 
     return $mod ? 10 - $mod : 0;
-}
-
-=head2 logo
-
-Returns logo file name for selected service.
-
-=cut
-
-sub logo {
-    my $self = shift;
-
-    return $logo_files{$self->{mode}} . '.bmp';
 }
 
 =head1 AUTHOR
