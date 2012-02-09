@@ -12,6 +12,7 @@ my ($colissimo, $tracking, $sorting, $tracking_expected, $sorting_expected,
     $len, %mode_values, $mode, $value_ref);
 
 %mode_values = (access_f => {product_code => '8L'},
+		expert_f => {product_code => '8V'}, 
 		expert_om => {product_code => '7A'},
     );
 
