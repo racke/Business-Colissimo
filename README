@@ -2,17 +2,27 @@ NAME
     Business::Colissimo - Shipping labels for ColiPoste
 
 VERSION
-    Version 0.0002
+    Version 0.0100
 
 SYNOPSIS
         use Business::Colissimo;
 
-        $colissimo = Business::Colissimo->new(mode => 'access_f');
+        $colissimo = Business::Colissimo->new(mode => 'access_f',
+                                   customer_number => '900001',
+                                   parcel_number => '2052475203',
+                                   postal_code => '72240',
+                                   weight => 120);
+
+        # get logo file name
+        $colissimo->logo;
+
+        # produce barcode images
+        $colissimo->barcode('tracking', spacing => 1);
+        $colissimo->barcode('shipping', spacing => 1);
 
         # customer number
-        $colissimo->customer_number('900001');
-
-        # parcel number from your alloted range of numbers
+        $colissimo->customer_number('900001')
+        # parcel number from your alloted range numbers
         $colissimo->parcel_number('2052475203');
 
         # postal code for recipient
@@ -33,8 +43,15 @@ SYNOPSIS
         # recommendation level (expert mode only)
         $colissimo->level('21');
 
+        # set scale in pixels for barcode image (default: 1)
+        $colissimo->scale(2);
+
+        # set height in pixels for barcode image (default: 77)
+        $colissimo->height(100);
+
 DESCRIPTION
-    Business::Colissimo supports the following ColiPoste services:
+    Business::Colissimo helps you to produce shipping labels for the
+    following ColiPoste services:
 
     Access France
             $colissimo = Business::Colissimo->new(mode => 'access_f');
@@ -44,6 +61,15 @@ DESCRIPTION
 
     Expert Outre Mer
             $colissimo = Business::Colissimo->new(mode => 'expert_om');
+
+    Expert International
+            KPG countries:
+
+            $colissimo = Business::Colissimo->new(mode => 'expert_i_kpg');
+
+            Countries outside of KPG:
+
+            $colissimo = Business::Colissimo->new(mode => 'expert_i');
 
 METHODS
   new
@@ -90,6 +116,51 @@ METHODS
     Produces PNG image for arbitrary barcode:
 
         $colissimo->barcode_image('8L20524752032');
+
+    The scale of the image can be changed for each barcode individually:
+
+        $colissimo->barcode_image('8L20524752032', scale => 2);
+
+    The default scale is set to 1, because that produces images with the
+    right number of pixels to include them into PDF with PDF::API2, which
+    uses 72dpi resolution for images unless you specify width and height
+    explicitly (see PDF::API2::Content).
+
+    The formula for calculating width in mm for a 72dpi resolution is as
+    follows:
+
+        (1px * 25.4) / 72dpi
+
+    This fits into Colissimo's requirement for the basic module (narrowest
+    element of the bar code) of 0.33 to 0.375 mm.
+
+  logo
+    Returns logo file name for selected service.
+
+        $colissimo->logo;
+
+  test
+    Toggles testing.
+
+        $colissimo->test(1);
+
+  scale
+    Get current scale for barcode image:
+
+        $colissimo->scale;
+
+    Set current scale for barcode image:
+
+        $colissimo->scale(3);
+
+  height
+    Get current height for barcode image:
+
+        $colissimo->height;
+
+    Set current height for barcode image:
+
+        $colissimo->height(100);
 
   customer_number
     Get current customer number:
@@ -165,9 +236,6 @@ METHODS
 
   control_key
     Returns control key for barcode.
-
-  logo
-    Returns logo file name for selected service.
 
 AUTHOR
     Stefan Hornburg (Racke), `<racke at linuxia.de>'

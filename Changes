@@ -1,5 +1,19 @@
 Revision history for Business::Colissimo
 
+0.0100 Fri Feb 10 10:04:55 2012 CET
+
+    [API CHANGES]
+
+    * Set default barcode image scale to 1px.
+    * Set default barcode height to 77px.
+
+    [ENHANCEMENTS]
+
+    * Add support for changing barcode image scale.
+    * Add support for changing barcode height.
+    * Remove border from barcode images.
+    * Add testing mode.
+
 0.0002 Mon Jan 30 11:46:13 2012 CET
 
     [API CHANGES]
