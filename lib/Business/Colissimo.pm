@@ -52,6 +52,7 @@ my %attributes = (parcel_number => 'parcel number',
 		  # barcode image
 		  scale => 'barcode image scale factor',
 		  height => 'barcode image height',
+		  padding => 'barcode image padding',
 
 		  # testing
 		  test => 'testing',
@@ -197,6 +198,7 @@ sub new {
 	     # barcode image
 	     scale => 1,
 	     height => 77,
+             padding => 20,
 
 	     # testing
 	     test => 0,
@@ -339,7 +341,7 @@ module (narrowest element of the bar code) of
 
 sub barcode_image {
     my ($self, $type, %args) = @_;
-    my ($barcode, $image, $code128, $png, $scale, $height);
+    my ($barcode, $image, $code128, $png, $scale, $height, $padding);
 
     if ($type eq 'tracking' || $type eq 'sorting') {
 	$barcode = $self->barcode($type);
@@ -360,6 +362,10 @@ sub barcode_image {
     if ($height = $self->{height} || $args{height}) {
 	$code128->height($height);
     }
+
+    # padding
+    $padding = $self->{padding} || $args{padding};
+    $code128->padding($padding);
 
     $code128->show_text(0);
 
@@ -460,6 +466,35 @@ sub height {
     }
 
     return $self->{height};
+}
+
+=head2 padding
+
+Get current padding for barcode image:
+
+    $colissimo->padding;
+
+Set current padding for barcode image:
+
+    $colissimo->padding(0);
+
+=cut
+
+sub padding {
+    my $self = shift;
+    my $padding;
+
+    if (@_ > 0 && defined $_[0]) {
+	$padding = $_[0];
+
+	if ($padding !~ /^\d+$/) {
+	    die 'Please provide valid padding';
+	}
+
+	$self->{padding} = $padding;
+    }
+
+    return $self->{padding};
 }
 
 =head2 customer_number
