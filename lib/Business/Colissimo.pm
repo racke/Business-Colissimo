@@ -719,7 +719,7 @@ sub level {
 	
         $number =~ s/\s+//g;
 
-	if ($number !~ /^([0\d]|10|2[123])$/ ) {
+	if ($number !~ /^(0\d|10|2[123])$/ ) {
 	    die 'Please provide valid value for insurance/recommendation level.';
 	}
 
