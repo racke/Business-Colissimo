@@ -2,7 +2,7 @@ NAME
     Business::Colissimo - Shipping labels for ColiPoste
 
 VERSION
-    Version 0.0100
+    Version 0.0200
 
 SYNOPSIS
         use Business::Colissimo;
@@ -161,6 +161,15 @@ METHODS
     Set current height for barcode image:
 
         $colissimo->height(100);
+
+  padding
+    Get current padding for barcode image:
+
+        $colissimo->padding;
+
+    Set current padding for barcode image:
+
+        $colissimo->padding(0);
 
   customer_number
     Get current customer number:

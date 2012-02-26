@@ -1,5 +1,15 @@
 Revision history for Business::Colissimo
 
+0.0200 Sun Feb 26 18:26:12 2012 IST
+
+    [ENHANCEMENTS]
+
+    * Add support for changing barcode image padding.
+
+    [BUG FIXES]
+
+    * Fix regular expression for insurance resp. recommendation level.
+
 0.0100 Fri Feb 10 10:04:55 2012 CET
 
     [API CHANGES]
