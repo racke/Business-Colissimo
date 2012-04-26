@@ -49,6 +49,9 @@ my %attributes = (parcel_number => 'parcel number',
 		  cod => 'cash on delivery',
 		  level => 'insurance/recommendation level',
 
+          # expert_i mode
+          country_code => 'country code',
+                  
 		  # barcode image
 		  scale => 'barcode image scale factor',
 		  height => 'barcode image height',
@@ -99,6 +102,9 @@ my %countries = (AU => {kpg => 1},
     $colissimo->customer_number('900001')
     # parcel number from your alloted range numbers
     $colissimo->parcel_number('2052475203');
+
+    # country code for recipient (expert_i and expert_i_kpg mode)
+    $colissimo->country_code('DE');
 
     # postal code for recipient
     $colissimo->postal_code('72240');
@@ -187,6 +193,7 @@ sub new {
 
     $self = {mode => delete $args{mode},
 	     parcel_number => '',
+         country_code => '',
 	     postal_code => '',
 	     customer_code => '',
 	     not_mechanisable => '0',
@@ -204,6 +211,13 @@ sub new {
 	     test => 0,
     };
 
+    if ($self->{mode} eq 'expert_i' || $self->{mode} eq 'expert_i_kpg') {
+        $self->{international} = 1;
+    }
+    else {
+        $self->{international} = 0;
+    }
+    
     bless $self, $class;
 
     for my $name (keys %args) {
@@ -242,62 +256,106 @@ sub barcode {
     $barcode = $product_codes{$self->{mode}};
 
     unless (length($self->{parcel_number})) {
-	die "Missing $attributes{parcel_number}";
+        die "Missing $attributes{parcel_number}";
     }
     
     if ($type eq 'sorting') {
-	# check if we have everything we need
-	for my $name (qw/postal_code parcel_number customer_number weight/) {
-	    unless (length($self->{$name})) {
-		die "Missing $attributes{$name}";
-	    }
-	}
+        # check if we have everything we need
+        my @required = qw/postal_code parcel_number customer_number weight/;
 
-	# fixed sort code
-	$barcode .= '1';
+        if ($self->{international}) {
+            push (@required, 'country_code');
+        }
+        
+        for my $name (@required) {
+            unless (length($self->{$name})) {
+                die "Missing $attributes{$name} for mode $self->{mode}";
+            }
+        }
+        
+        # fixed sort code
+        if ($self->{international}) {
+            $barcode .= '2';
+        }
+        else {
+            $barcode .= '1';
+        }
+        
+        if ($self->{international}) {
+            # recipient country code
+            $barcode .= $self->country_code;
 
-	# recipient postal code
-	$barcode .= $self->postal_code;
+            # recipient postal code (first three characters, filled with zeroes if necessary)
+            my $postal = $self->postal_code;
 
-	# customer code
-	$control = $self->customer_number;
+            if (length($postal) >= 3) {
+                $barcode .= substr($postal, 0, 3);
+            }
+            else {
+                $barcode .= $postal . ('0' x (3 - length($postal)));
+            }
+        }
+        else {
+            # recipient postal code
+            $barcode .= $self->postal_code;
+        }
+        
+        # customer code
+        $control = $self->customer_number;
 
-	# parcel weight
-	$control .= $self->weight;
+        # parcel weight
+        $control .= $self->weight;
 
-	# insurance/recommendation level
-	$control .= $self->level;
+        # insurance/recommendation level
+        $control .= $self->level;
 
-	# not mechanisable 
-	$control .= $self->not_mechanisable;
+        # not mechanisable 
+        $control .= $self->not_mechanisable;
 
-	# cash on delivery
-	$control .= $self->cod;
-
-	# control link digit (last digit of parcel number)
-	$control .= substr($self->parcel_number, 9, 1);
-	
-	$barcode .= $control . $self->control_key($control);
-
-	if ($args{spacing}) {
-	    return join(' ', substr($barcode, 0, 3),
-			substr($barcode, 3, 5),
-			substr($barcode, 8, 6),
-			substr($barcode, 14, 4),
-			substr($barcode, 18, 6));	   
-	}
+        # cash on delivery
+        $control .= $self->cod;
+    
+        # control link digit (last digit of parcel number)
+        if ($self->international) {
+            $control .= substr($self->parcel_number, 7, 1);
+        } else {
+            $control .= substr($self->parcel_number, 9, 1);
+        }
+    
+        $barcode .= $control . $self->control_key($control);
+    
+  
+        if ($args{spacing}) {
+            return join(' ', substr($barcode, 0, 3),
+                        substr($barcode, 3, 5),
+                        substr($barcode, 8, 6),
+                        substr($barcode, 14, 4),
+                        substr($barcode, 18, 6));
+        }
     }
     else {
-	$parcel_number = $self->parcel_number;
-	$barcode .= $parcel_number;
-	$barcode .= $self->control_key($parcel_number);
+        $parcel_number = $self->parcel_number;
+        $barcode .= $parcel_number;
+        $barcode .= $self->control_key($parcel_number);
 
-	if ($args{spacing}) {
-	    return join(' ', substr($barcode, 0, 2),
-			substr($barcode, 2, 5),
-			substr($barcode, 7, 5),
-			substr($barcode, 12, 1));
-	}
+        if ($self->{international} && $type eq 'tracking') {
+            $barcode .= 'FR';
+        }
+   
+        if ($args{spacing}) {
+            if ($self->{international}) {
+                return join(' ', substr($barcode, 0, 2),
+                            substr($barcode, 2, 4),
+                            substr($barcode, 6, 4),
+                            substr($barcode, 10, 3));
+            }
+            else {
+                return join(' ', substr($barcode, 0, 2),
+                            substr($barcode, 2, 5),
+                            substr($barcode, 7, 5),
+                            substr($barcode, 12, 1));
+            }
+        }
     }
 
     return $barcode;
@@ -545,18 +603,71 @@ sub parcel_number {
     my $number;
 
     if (@_ > 0 && defined $_[0]) {
-	$number = $_[0];
+        $number = $_[0];
 	
         $number =~ s/\s+//g;
 
-	if ($number !~ /^\d{10}$/) {
-	    die 'Please provide valid parcel number (10 digits) for barcode';
-	}
-
-	$self->{parcel_number} = $number;
+        if ($self->{international}) {
+            if ($number !~ /^\d{8}$/) {
+                die 'Please provide valid parcel number (8 digits) for barcode';
+            }
+        }
+        else {
+            if ($number !~ /^\d{10}$/) {
+                die 'Please provide valid parcel number (10 digits) for barcode';
+            }
+        }
+        
+        $self->{parcel_number} = $number;
     }
 
     return $self->{parcel_number};
+}
+
+=head2 country_code
+
+Get current country code:
+
+    $colissimo->country
+
+Set current country code:
+
+    $colissimo->country('BE');
+
+The country code is defined in the ISO 3166 standard.
+
+Switches to expert_i_kpg mode automatically.
+
+=cut
+
+sub country_code {
+    my $self = shift;
+    my $string;
+
+    if (@_ > 0 && defined $_[0]) {
+        $string = uc($_[0]);
+        $string =~ s/\s+//g;
+
+        if ($string !~ /^[A-Z]{2}$/) {
+            die 'Please provide valid country code for barcode';
+        }
+
+        if ($self->{mode} eq 'access_f'
+            || $self->{mode} eq 'expert_f') {
+            die "Only France is allowed as delivery country for $self->{mode}.\n";
+        }
+        elsif ($string eq 'FR') {
+            die "France isn't allowed as delivery country for $self->{mode}.\n";
+        }
+
+        if (exists $countries{$string} && $countries{$string}->{kpg}) {
+            $self->{mode} = 'expert_i_kpg';
+        }
+        
+        $self->{country_code} = $string;
+    }
+
+    return $self->{country_code};
 }
 
 =head2 postal_code
@@ -576,15 +687,22 @@ sub postal_code {
     my $string; 
 
     if (@_ > 0 && defined $_[0]) {
-	$string = $_[0];
+        $string = $_[0];
 	
         $string =~ s/\s+//g;
 
-	if ($string !~ /^[A-Z0-9]{5}/) {
-	    die 'Please provide valid postal code (5 alphanumerics) for barcode';
-	}
-
-	$self->{postal_code} = $string;
+        if ($self->{international}) {
+            if ($string !~ /^[A-Z0-9]{1,5}$/) {
+                die 'Please provide valid postal code (1-5 alphanumerics) for barcode';
+            }
+        }
+        else {
+            if ($string !~ /^[A-Z0-9]{5}$/) {
+                die 'Please provide valid postal code (5 alphanumerics) for barcode';
+            }
+        }
+        
+        $self->{postal_code} = $string;
     }
 
     return $self->{postal_code};
@@ -733,7 +851,18 @@ sub level {
 
     return $self->{level};
 }
-    
+
+=head2 international
+
+Returns 1 on international (expert_i or expert_i_kpg) shippings,
+0 otherwise.
+
+=cut
+
+sub international {
+    return $_[0]->{international};
+}
+
 =head2 control_key
 
 Returns control key for barcode.
