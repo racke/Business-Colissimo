@@ -9,6 +9,7 @@ t/00-load.t
 t/01-control-key.t
 t/02-barcodes.t
 t/03-images.t
+t/04-logos.t
 t/manifest.t
 t/pod-coverage.t
 t/pod.t
