@@ -1,5 +1,19 @@
 Revision history for Business::Colissimo
 
+0.0210 
+
+    [ENHANCEMENTS]
+
+    * Add support for producing correct bar codes for Expert International.
+
+    [BUG FIXES]
+
+    * Fix broken output from logo method for KPG countries. 
+
+    [TESTS]
+
+    * Add tests for logo method.
+
 0.0200 Sun Feb 26 18:26:12 2012 IST
 
     [ENHANCEMENTS]

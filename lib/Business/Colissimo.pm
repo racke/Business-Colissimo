@@ -65,6 +65,7 @@ my %logo_files = (access_f => 'AccessF',
 		  expert_f => 'ExpertF',
 		  expert_om => 'ExpertOM',
 		  expert_i => 'ExpertInter',
+		  expert_i_kpg => 'ExpertInter',                  
     );
 
 my %countries = (AU => {kpg => 1},
