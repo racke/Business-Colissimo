@@ -655,7 +655,9 @@ sub country_code {
 
         if ($self->{mode} eq 'access_f'
             || $self->{mode} eq 'expert_f') {
-            die "Only France is allowed as delivery country for $self->{mode}.\n";
+            if ($string ne 'FR') {
+                die "Only France is allowed as delivery country for $self->{mode}.\n";
+            }
         }
         elsif ($self->{mode} eq 'expert_om') {
             # no country code requirements yet
