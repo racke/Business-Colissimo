@@ -657,6 +657,9 @@ sub country_code {
             || $self->{mode} eq 'expert_f') {
             die "Only France is allowed as delivery country for $self->{mode}.\n";
         }
+        elsif ($self->{mode} eq 'expert_om') {
+            # no country code requirements yet
+        }
         elsif ($string eq 'FR') {
             die "France isn't allowed as delivery country for $self->{mode}.\n";
         }
