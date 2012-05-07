@@ -2,7 +2,7 @@ NAME
     Business::Colissimo - Shipping labels for ColiPoste
 
 VERSION
-    Version 0.0200
+    Version 0.1000
 
 SYNOPSIS
         use Business::Colissimo;
@@ -24,6 +24,9 @@ SYNOPSIS
         $colissimo->customer_number('900001')
         # parcel number from your alloted range numbers
         $colissimo->parcel_number('2052475203');
+
+        # country code for recipient (expert_i and expert_i_kpg mode)
+        $colissimo->country_code('DE');
 
         # postal code for recipient
         $colissimo->postal_code('72240');
@@ -189,6 +192,19 @@ METHODS
 
         $colissimo->parcel_number('2052475203');
 
+  country_code
+    Get current country code:
+
+        $colissimo->country
+
+    Set current country code:
+
+        $colissimo->country('BE');
+
+    The country code is defined in the ISO 3166 standard.
+
+    Switches to expert_i_kpg mode automatically.
+
   postal_code
     Get current postal code:
 
@@ -242,6 +258,10 @@ METHODS
 
     The level option is only available in expert mode, possible values are
     01 ... 10 for insurance level and 21 ... 23 for recommendation level.
+
+  international
+    Returns 1 on international (expert_i or expert_i_kpg) shippings, 0
+    otherwise.
 
   control_key
     Returns control key for barcode.
