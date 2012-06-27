@@ -6,29 +6,43 @@ use warnings;
 use Test::More;
 use Business::Colissimo;
 
-
-
 my ($colissimo, $tracking, $sorting, $tracking_expected, $sorting_expected,
-    $len, %mode_values, $mode, $value_ref, $country, $international);
+    $len, @mode_values, $mode, $value_ref, $country, $international);
 
-%mode_values = (access_f => {product_code => '8L', international => 0},
-                expert_f => {product_code => '8V', international => 0}, 
-                expert_om => {product_code => '7A', international => 0},
-                expert_i => {product_code => 'CY', international => 1},
-                expert_i_kpg => {product_code => 'EY', international => 1},
+@mode_values = ([access_f => {product_code => '8L', 
+                              international => 0, 
+                              options => {}}],
+                [expert_f => {product_code => '8V', international => 0, options => {}}],
+                [expert_om => {product_code => '7A', international => 0, options => {}}],
+                [expert_om => {product_code => '7A', international => 0, 
+                               options => {ack_receipt => 1},
+                               sorting => '7A1722409000011234000493',
+                 }],
+                [expert_om => {product_code => '7A', international => 0, 
+                               options => {ack_receipt => 1, duty_free => 1},
+                               sorting => '7A1722409000011234000691',
+                 }],
+                [expert_om => {product_code => '7A', international => 0, 
+                               options => {cod => 1},
+                               sorting => '7A1722409000011234000196',
+                 }],
+                [expert_i => {product_code => 'CY', international => 1, options => {}}],
+                [expert_i_kpg => {product_code => 'EY', international => 1, options => {}}],
     );
 
-plan tests => 9 * keys %mode_values;
+plan tests => 9 * scalar @mode_values;
 
-while (($mode, $value_ref) = each %mode_values) {
+for (@mode_values) {
+    my ($mode, $value_ref) = @$_;
+    
     $country = 'BE';
     
-    $colissimo = Business::Colissimo->new(mode => $mode);
+    $colissimo = Business::Colissimo->new(mode => $mode, %{$value_ref->{options}});
 
     # test whether international is set correctly
     $international = $colissimo->international;
 
-    ok($international == $mode_values{$mode}->{international}, 'international test')
+    ok($international == $value_ref->{international}, 'international test')
         || diag "wrong value for international: $international";
 
     if ($international) {
@@ -85,17 +99,20 @@ while (($mode, $value_ref) = each %mode_values) {
 
     $len = length($sorting);
 
-    ok($len == 24, 'sorting barcode test')
+    ok($len == 24, "sorting barcode test for mode $mode")
 	|| diag "length $len instead of 24: $sorting";
 
-    if ($international) {
+    if ($value_ref->{sorting}) {
+        $sorting_expected = $value_ref->{sorting};
+    }
+    elsif ($international) {
         $sorting_expected = $value_ref->{product_code} . '2BE1239000011234000073';
     }
     else {
         $sorting_expected = $value_ref->{product_code} . '1722409000011234000097';
     }
     
-    ok($sorting eq $sorting_expected, 'shipping barcode number test')
+    ok($sorting eq $sorting_expected, "shipping barcode number test for mode $mode")
 	|| diag "barcode $sorting instead of $sorting_expected";
 
     # check sorting barcode with spacing
@@ -106,7 +123,13 @@ while (($mode, $value_ref) = each %mode_values) {
     ok($len == 28, 'sorting barcode number test with spacing')
 	|| diag "length $len instead of 24: $sorting";
 
-    if ($international) {
+    if ($value_ref->{sorting}) {
+        $sorting_expected = join(' ', substr($value_ref->{sorting}, 0, 3),
+                                 substr($value_ref->{sorting}, 3, 5),
+                                 substr($value_ref->{sorting}, 8, 6),
+                                 substr($value_ref->{sorting}, 14, 4),
+                                 substr($value_ref->{sorting}, 18, 6));
+    } elsif ($international) {
         $sorting_expected = $value_ref->{product_code} . '2 BE123 900001 1234 000073';
     }
     else {

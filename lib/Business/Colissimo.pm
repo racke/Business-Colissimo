@@ -45,10 +45,16 @@ my %attributes = (parcel_number => 'parcel number',
 		  weight => 'parcel weight',
 		  not_mechanisable => 'not mechanisable',
 
-		  # expert mode
+		  # expert modes
 		  cod => 'cash on delivery',
 		  level => 'insurance/recommendation level',
 
+          # expert_om/expert_i modes
+          ack_receipt => 'acknowledgement of receipt',
+          
+          # expert_om mode
+          duty_free => 'customs duty free (FTD)',
+          
           # expert_i mode
           country_code => 'country code',
                   
@@ -219,8 +225,10 @@ sub new {
 	     # expert 
 	     cod => '0',
 	     level => '00',
+         ack_receipt => '0',
+         duty_free => '0',
 
-	     # barcode image
+         # barcode image
 	     scale => 1,
 	     height => 77,
              padding => 20,
@@ -330,9 +338,19 @@ sub barcode {
         # not mechanisable 
         $control .= $self->not_mechanisable;
 
-        # cash on delivery
-        $control .= $self->cod;
-    
+        if ($self->{mode} eq 'expert_om'
+            || $self->international) {
+            # combination of cash on delivery, customs duty free
+            # and acknowledgement of receipt options
+            $control .= $self->cod 
+                + 2 * $self->duty_free
+                + 4 * $self->ack_receipt;
+        }
+        else {
+            # cash on delivery
+            $control .= $self->cod;
+        }
+
         # control link digit (last digit of parcel number)
         if ($self->international) {
             $control .= substr($self->parcel_number, 7, 1);
@@ -873,6 +891,82 @@ sub level {
     }
 
     return $self->{level};
+}
+
+=head2 ack_receipt
+
+Get current value for acknowledgement of receipt (AR):
+
+    $colissimo->ack_receipt;
+
+Set current value for acknowledgement of receipt (AR):
+
+    $colissimo->ack_receipt(1);
+
+Returns 1 if acknowledgement of receipt is enabled, 0 otherwise.
+
+The ack_receipt option is only available in expert_om and expert_i modes,
+possible values are 0 (No) and 1 (Yes).
+
+=cut
+
+sub ack_receipt {
+    my $self = shift;
+    my $number;
+
+    if (@_ > 0 && defined $_[0]) {
+        $number = $_[0];
+        $number =~ s/\s+//g;
+
+        if ($number !~ /^[01]$/) {
+            die 'Please provide valid value for acknowledgement of receipt option (0 or 1)';
+        }
+
+        unless ($self->international || $self->{mode} eq 'expert_om') {
+            die 'Acknowledgement of receipt option only available in expert_om and expert_i modes.';
+        }
+        
+        $self->{ack_receipt} = $number;
+    }
+
+    return $self->{ack_receipt};
+}
+
+=head2 duty_free
+
+Get current value for customs duty free (FTD):
+
+    $colissimo->duty_free;
+
+Set current value for customs duty free (FTD):
+
+    $colissimo->duty_free(1);
+
+The custom duty free option is only available in expert_om mode,
+possible values are 0 (No) and 1 (Yes).
+
+=cut
+
+sub duty_free {
+    my $self = shift;
+    my $number;
+
+    if (@_ > 0 && defined $_[0]) {
+        $number = $_[0];
+        $number =~ s/\s+//g;
+
+        if ($number !~ /^[01]$/) {
+            die 'Please provide valid value for customs duty free option (0 or 1)';
+        }
+
+        unless ($self->{mode} eq 'expert_om') {
+            die 'Customs duty free option only available in expert_om mode.';
+        }
+        
+        $self->{duty_free} = $number;
+    }
+    
+    return $self->{duty_free};
 }
 
 =head2 international
