@@ -68,18 +68,35 @@ my %logo_files = (access_f => 'AccessF',
 		  expert_i_kpg => 'ExpertInter',                  
     );
 
-my %countries = (AU => {kpg => 1},
-		 BR => {kpg => 1},
-		 CN => {kpg => 1},
-		 HK => {kpg => 1},
-		 IL => {kpg => 1},
-		 JP => {kpg => 1},
-		 KR => {kpg => 1},
-		 MA => {kpg => 1},
-		 RU => {kpg => 1},
-		 SG => {kpg => 1},
-		 VN => {kpg => 1},
-		 US => {kpg => 1},
+my %countries = (AT => {epg => 1},
+                 AU => {kpg => 1},
+                 BE => {epg => 1},
+                 BR => {kpg => 1},
+                 CH => {epg => 1},
+                 CN => {kpg => 1},
+                 DE => {epg => 1},
+                 DK => {epg => 1},
+                 ES => {epg => 1},
+                 FI => {epg => 1},
+                 FR => {epg => 1},
+                 GB => {epg => 1},
+                 GR => {epg => 1},
+                 HK => {kpg => 1},
+                 IE => {epg => 1},
+                 IL => {kpg => 1},
+                 IS => {epg => 1},
+                 IT => {epg => 1},
+                 JP => {kpg => 1},
+                 KR => {kpg => 1},
+                 LU => {epg => 1},
+                 MA => {kpg => 1},
+                 NO => {epg => 1},
+                 PT => {epg => 1},
+                 RU => {kpg => 1},
+                 SG => {kpg => 1},
+                 SE => {epg => 1},
+                 VN => {kpg => 1},
+                 US => {kpg => 1},
     );
 
 =head1 SYNOPSIS 
@@ -867,6 +884,31 @@ Returns 1 on international (expert_i or expert_i_kpg) shippings,
 
 sub international {
     return $_[0]->{international};
+}
+
+=head2 organisation
+
+Returns the acronym of the inter-postal organisation (KPG or EPG)
+corresponding to the destination country.
+
+=cut
+
+sub organisation {
+    my $self = shift;
+    
+    if (exists $countries{$self->{country_code}}) {
+        my $cref = $countries{$self->{country_code}};
+
+        if ($cref->{epg}) {
+            return 'EPG';
+        }
+
+        if ($cref->{kpg}) {
+            return 'KPG';
+        }
+    }
+
+    return '';
 }
 
 =head2 control_key
