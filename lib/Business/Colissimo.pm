@@ -922,7 +922,7 @@ sub ack_receipt {
             die 'Please provide valid value for acknowledgement of receipt option (0 or 1)';
         }
 
-        unless ($self->international || $self->{mode} eq 'expert_om') {
+        unless ($number == 0 || $self->international || $self->{mode} eq 'expert_om') {
             die 'Acknowledgement of receipt option only available in expert_om and expert_i modes.';
         }
         
@@ -959,7 +959,7 @@ sub duty_free {
             die 'Please provide valid value for customs duty free option (0 or 1)';
         }
 
-        unless ($self->{mode} eq 'expert_om') {
+        unless ($number == 0 || $self->{mode} eq 'expert_om') {
             die 'Customs duty free option only available in expert_om mode.';
         }
         
