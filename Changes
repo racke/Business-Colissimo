@@ -1,5 +1,16 @@
 Revision history for Business::Colissimo
 
+0.2000 Fri Jun 29 13:08:31 2012 CEST
+
+    [ENHANCEMENTS]
+
+    * Add support for acknowledgement of receipt and customs duty free.
+    * Add organisation method.
+
+    [BUG FIXES]
+
+    * Allow up to 10 alphanumerics for international postal codes.
+ 
 0.1000 Mon May  7 08:40:37 2012 CEST
 
     [ENHANCEMENTS]

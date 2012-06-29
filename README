@@ -2,7 +2,7 @@ NAME
     Business::Colissimo - Shipping labels for ColiPoste
 
 VERSION
-    Version 0.1000
+    Version 0.2000
 
 SYNOPSIS
         use Business::Colissimo;
@@ -259,9 +259,39 @@ METHODS
     The level option is only available in expert mode, possible values are
     01 ... 10 for insurance level and 21 ... 23 for recommendation level.
 
+  ack_receipt
+    Get current value for acknowledgement of receipt (AR):
+
+        $colissimo->ack_receipt;
+
+    Set current value for acknowledgement of receipt (AR):
+
+        $colissimo->ack_receipt(1);
+
+    Returns 1 if acknowledgement of receipt is enabled, 0 otherwise.
+
+    The ack_receipt option is only available in expert_om and expert_i
+    modes, possible values are 0 (No) and 1 (Yes).
+
+  duty_free
+    Get current value for customs duty free (FTD):
+
+        $colissimo->duty_free;
+
+    Set current value for customs duty free (FTD):
+
+        $colissimo->duty_free(1);
+
+    The custom duty free option is only available in expert_om mode,
+    possible values are 0 (No) and 1 (Yes).
+
   international
     Returns 1 on international (expert_i or expert_i_kpg) shippings, 0
     otherwise.
+
+  organisation
+    Returns the acronym of the inter-postal organisation (KPG or EPG)
+    corresponding to the destination country.
 
   control_key
     Returns control key for barcode.
