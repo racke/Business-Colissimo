@@ -733,8 +733,8 @@ sub postal_code {
         $string =~ s/\s+//g;
 
         if ($self->{international}) {
-            if ($string !~ /^[A-Z0-9]{1,5}$/) {
-                die 'Please provide valid postal code (1-5 alphanumerics) for barcode';
+            if ($string eq '0' || $string !~ /^[A-Z0-9]{1,10}$/) {
+                die 'Please provide valid postal code (1-10 alphanumerics) for barcode';
             }
         }
         else {
