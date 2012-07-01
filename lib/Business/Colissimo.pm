@@ -882,7 +882,7 @@ sub level {
 	    die 'Please provide valid value for insurance/recommendation level.';
 	}
 
-	if ($self->{mode} eq 'access' 
+	if ($self->{mode} eq 'access_f' 
 	    && $number ne '00') {
 	    die 'Insurance/recommendation level not available in access mode.';
 	}
