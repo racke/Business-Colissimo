@@ -12,6 +12,7 @@ t/03-images.t
 t/04-logos.t
 t/05-countries.t
 t/06-limits.t
+t/07-level.t
 t/manifest.t
 t/pod-coverage.t
 t/pod.t
