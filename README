@@ -2,7 +2,7 @@ NAME
     Business::Colissimo - Shipping labels for ColiPoste
 
 VERSION
-    Version 0.2000
+    Version 0.2100
 
 SYNOPSIS
         use Business::Colissimo;

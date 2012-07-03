@@ -1,5 +1,12 @@
 Revision history for Business::Colissimo
 
+0.2100 Tue Jul  3 16:41:24 2012 CEST
+
+    [BUG FIXES]
+
+    * Fix calculation of tracking bar codes for expert_i mode.
+    * Fix insurance/recommendation level check for access_f mode.
+
 0.2000 Fri Jun 29 13:08:31 2012 CEST
 
     [ENHANCEMENTS]
