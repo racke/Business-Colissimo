@@ -1016,6 +1016,28 @@ sub control_key {
     my (@codes, $even, $odd, $key, $mod);
 
     @codes = split(//, $characters);
+
+    if ($self->international && @codes == 8) {
+        # special case for tracking control keys
+        # for international orders
+        my @coefficients = (8, 6, 4, 2, 3, 5, 9, 7);
+
+        while (@codes) {
+            $key += shift(@codes) * shift(@coefficients);
+        }
+
+        $mod = $key % 11;
+
+        if ($mod == 0) {
+            return 5;
+        }
+        elsif ($mod == 1) {
+            return 0;
+        }
+        else {
+            return 11 - $mod;
+        }
+    }
     
     if (@codes % 2) {
 	# pad characters for sorting control key
