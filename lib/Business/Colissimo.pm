@@ -145,7 +145,7 @@ my %countries = (AT => {epg => 1},
     # insurance level (expert mode only)
     $colissimo->level('01');
 
-    # recommendation level (expert mode only)
+    # recommendation level (expert_f and expert_om mode only)
     $colissimo->level('21');
 
     # set scale in pixels for barcode image (default: 1)
