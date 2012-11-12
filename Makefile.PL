@@ -16,7 +16,8 @@ WriteMakefile(
         'Test::More' => 0,
     },
     PREREQ_PM => {
-	'Barcode::Code128' => 0,
+        'GD' => 0,
+	    'Barcode::Code128' => 0,
     },
     dist                => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },
     clean               => { FILES => 'Business-Colissimo-*' },
