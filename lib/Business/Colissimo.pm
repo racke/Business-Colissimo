@@ -12,11 +12,11 @@ Business::Colissimo - Shipping labels for ColiPoste
 
 =head1 VERSION
 
-Version 0.2100
+Version 0.2200
 
 =cut
 
-our $VERSION = '0.2100';
+our $VERSION = '0.2200';
 
 my %product_codes = (access_f => '8L', 
 		     expert_f => '8V', 
