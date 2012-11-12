@@ -1,5 +1,17 @@
 Revision history for Business::Colissimo
 
+0.2200 Mon Nov 12 08:42:34 2012 CET
+
+    [BUG FIXES]
+
+    * Add prerequisite on GD which is required for the png method of
+      Barcode::Code128.
+
+    [DOCUMENTATION]
+
+    * Show that recommendation level is valid only in expert_f and expert_om
+      modes.
+
 0.2100 Tue Jul  3 16:41:24 2012 CEST
 
     [BUG FIXES]
