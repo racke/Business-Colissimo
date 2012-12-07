@@ -35,8 +35,8 @@ my %test_account = (access_f => '964744',
 my %test_ranges = (access_f => [qw/4139207826 4139212825/],
 		   expert_f => [qw/5649204247 5649209246/],
 		   expert_om => [qw/5389439016 5389444015/],
-		   expert_i => [qw/00005801 00055800/],
-		   expert_i_kpg => [qw/00000001 00051000/],
+		   expert_i => [qw/0000005801 0000055800/],
+		   expert_i_kpg => [qw/0000000001 000051000/],
 		    );
 		   
 my %attributes = (parcel_number => 'parcel number', 
@@ -357,10 +357,9 @@ sub barcode {
         } else {
             $control .= substr($self->parcel_number, 9, 1);
         }
-    
+
         $barcode .= $control . $self->control_key($control);
-    
-  
+
         if ($args{spacing}) {
             return join(' ', substr($barcode, 0, 3),
                         substr($barcode, 3, 5),
@@ -371,26 +370,19 @@ sub barcode {
     }
     else {
         $parcel_number = $self->parcel_number;
+
+        if ($self->{international} && $type eq 'tracking') {
+            $barcode .= '00';
+        }
+
         $barcode .= $parcel_number;
         $barcode .= $self->control_key($parcel_number);
 
-        if ($self->{international} && $type eq 'tracking') {
-            $barcode .= 'FR';
-        }
-   
         if ($args{spacing}) {
-            if ($self->{international}) {
-                return join(' ', substr($barcode, 0, 2),
-                            substr($barcode, 2, 4),
-                            substr($barcode, 6, 4),
-                            substr($barcode, 10, 3));
-            }
-            else {
-                return join(' ', substr($barcode, 0, 2),
-                            substr($barcode, 2, 5),
-                            substr($barcode, 7, 5),
-                            substr($barcode, 12, 1));
-            }
+            return join(' ', substr($barcode, 0, 2),
+                        substr($barcode, 2, 5),
+                        substr($barcode, 7, 5),
+                        substr($barcode, 12, 1));
         }
     }
 

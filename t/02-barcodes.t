@@ -67,7 +67,7 @@ for (@mode_values) {
         || diag "length for mode $mode is $len instead of 13: $tracking";
 
     if ($international) {
-        $tracking_expected = $value_ref->{product_code} . '012345675FR';
+        $tracking_expected = $value_ref->{product_code} . '00012345675';
     }
     else {
         $tracking_expected = $value_ref->{product_code} . '01234567895';
@@ -85,7 +85,7 @@ for (@mode_values) {
 	|| diag "length $len instead of 16: $tracking";
 
     if ($international) {
-        $tracking_expected = $value_ref->{product_code} . ' 0123 4567 5FR';
+        $tracking_expected = $value_ref->{product_code} . ' 00012 34567 5';
     }
     else {
         $tracking_expected = $value_ref->{product_code} . ' 01234 56789 5';
