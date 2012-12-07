@@ -635,15 +635,8 @@ sub parcel_number {
 	
         $number =~ s/\s+//g;
 
-        if ($self->{international}) {
-            if ($number !~ /^\d{8}$/) {
-                die 'Please provide valid parcel number (8 digits) for barcode';
-            }
-        }
-        else {
-            if ($number !~ /^\d{10}$/) {
-                die 'Please provide valid parcel number (10 digits) for barcode';
-            }
+        if ($number !~ /^\d{10}$/) {
+            die 'Please provide valid parcel number (10 digits) for barcode';
         }
         
         $self->{parcel_number} = $number;
