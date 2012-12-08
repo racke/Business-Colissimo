@@ -370,11 +370,6 @@ sub barcode {
     }
     else {
         $parcel_number = $self->parcel_number;
-
-        if ($self->{international} && $type eq 'tracking') {
-            $barcode .= '00';
-        }
-
         $barcode .= $parcel_number;
         $barcode .= $self->control_key($parcel_number);
 
