@@ -67,7 +67,7 @@ for (@mode_values) {
         || diag "length for mode $mode is $len instead of 13: $tracking";
 
     if ($international) {
-        $tracking_expected = $value_ref->{product_code} . '00012345687';
+        $tracking_expected = $value_ref->{product_code} . '00012345689';
     }
     else {
         $tracking_expected = $value_ref->{product_code} . '01234567895';
@@ -85,7 +85,7 @@ for (@mode_values) {
 	|| diag "length $len instead of 16: $tracking";
 
     if ($international) {
-        $tracking_expected = $value_ref->{product_code} . ' 00012 34568 7';
+        $tracking_expected = $value_ref->{product_code} . ' 00012 34568 9';
     }
     else {
         $tracking_expected = $value_ref->{product_code} . ' 01234 56789 5';
@@ -106,7 +106,7 @@ for (@mode_values) {
         $sorting_expected = $value_ref->{sorting};
     }
     elsif ($international) {
-        $sorting_expected = $value_ref->{product_code} . '2BE1239000011234000059';
+        $sorting_expected = $value_ref->{product_code} . '2BE1239000011234000080';
     }
     else {
         $sorting_expected = $value_ref->{product_code} . '1722409000011234000097';
@@ -130,7 +130,7 @@ for (@mode_values) {
                                  substr($value_ref->{sorting}, 14, 4),
                                  substr($value_ref->{sorting}, 18, 6));
     } elsif ($international) {
-        $sorting_expected = $value_ref->{product_code} . '2 BE123 900001 1234 000059';
+        $sorting_expected = $value_ref->{product_code} . '2 BE123 900001 1234 000080';
     }
     else {
         $sorting_expected = $value_ref->{product_code} . '1 72240 900001 1234 000097';

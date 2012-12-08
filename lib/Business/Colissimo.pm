@@ -352,11 +352,7 @@ sub barcode {
         }
 
         # control link digit (last digit of parcel number)
-        if ($self->international) {
-            $control .= substr($self->parcel_number, 7, 1);
-        } else {
-            $control .= substr($self->parcel_number, 9, 1);
-        }
+        $control .= substr($self->parcel_number, 9, 1);
 
         $barcode .= $control . $self->control_key($control);
 
@@ -997,10 +993,18 @@ sub control_key {
 
     @codes = split(//, $characters);
 
-    if ($self->international && @codes == 8) {
+    if ($self->international && @codes == 10) {
         # special case for tracking control keys
         # for international orders
         my @coefficients = (8, 6, 4, 2, 3, 5, 9, 7);
+
+        # remove first two codes
+        if ($codes[0] eq '0' && $codes[1] eq '0') {
+            splice(@codes,0,2);
+        }
+        else {
+            die "Control key input is supposed to start with 00 for Expert I: $characters.";
+        }
 
         while (@codes) {
             $key += shift(@codes) * shift(@coefficients);
