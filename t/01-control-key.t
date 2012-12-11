@@ -18,9 +18,10 @@ my %control_keys = (access_f => {
                     },
                     expert_i => {
                         # control keys for tracking
-                        '0080832144' => 0,
-                        '0080837143' => 2,
-                        '0001234568' => 9,
+                        24561983 => 7,
+                        '00005826' => 6,
+                        '00005887' => 5, # modulo 0 => key 5,
+                        '00005899' => 0, # modulo 1 => key 0,
                         # control keys for sorting
                         900001086000003 => 7,
                     },

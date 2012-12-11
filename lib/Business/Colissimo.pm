@@ -35,8 +35,8 @@ my %test_account = (access_f => '964744',
 my %test_ranges = (access_f => [qw/4139207826 4139212825/],
 		   expert_f => [qw/5649204247 5649209246/],
 		   expert_om => [qw/5389439016 5389444015/],
-		   expert_i => [qw/0000005801 0000055800/],
-		   expert_i_kpg => [qw/0000000001 000051000/],
+		   expert_i => [qw/00005801 00055800/],
+		   expert_i_kpg => [qw/00000001 00051000/],
 		    );
 		   
 my %attributes = (parcel_number => 'parcel number', 
@@ -352,10 +352,15 @@ sub barcode {
         }
 
         # control link digit (last digit of parcel number)
-        $control .= substr($self->parcel_number, 9, 1);
-
+        if ($self->international) {
+            $control .= substr($self->parcel_number, 7, 1);
+        } else {
+            $control .= substr($self->parcel_number, 9, 1);
+        }
+    
         $barcode .= $control . $self->control_key($control);
-
+    
+  
         if ($args{spacing}) {
             return join(' ', substr($barcode, 0, 3),
                         substr($barcode, 3, 5),
@@ -369,11 +374,23 @@ sub barcode {
         $barcode .= $parcel_number;
         $barcode .= $self->control_key($parcel_number);
 
+        if ($self->{international} && $type eq 'tracking') {
+            $barcode .= 'FR';
+        }
+   
         if ($args{spacing}) {
-            return join(' ', substr($barcode, 0, 2),
-                        substr($barcode, 2, 5),
-                        substr($barcode, 7, 5),
-                        substr($barcode, 12, 1));
+            if ($self->{international}) {
+                return join(' ', substr($barcode, 0, 2),
+                            substr($barcode, 2, 4),
+                            substr($barcode, 6, 4),
+                            substr($barcode, 10, 3));
+            }
+            else {
+                return join(' ', substr($barcode, 0, 2),
+                            substr($barcode, 2, 5),
+                            substr($barcode, 7, 5),
+                            substr($barcode, 12, 1));
+            }
         }
     }
 
@@ -626,8 +643,15 @@ sub parcel_number {
 	
         $number =~ s/\s+//g;
 
-        if ($number !~ /^\d{10}$/) {
-            die 'Please provide valid parcel number (10 digits) for barcode';
+        if ($self->{international}) {
+            if ($number !~ /^\d{8}$/) {
+                die 'Please provide valid parcel number (8 digits) for barcode';
+            }
+        }
+        else {
+            if ($number !~ /^\d{10}$/) {
+                die 'Please provide valid parcel number (10 digits) for barcode';
+            }
         }
         
         $self->{parcel_number} = $number;
@@ -993,18 +1017,10 @@ sub control_key {
 
     @codes = split(//, $characters);
 
-    if ($self->international && @codes == 10) {
+    if ($self->international && @codes == 8) {
         # special case for tracking control keys
         # for international orders
         my @coefficients = (8, 6, 4, 2, 3, 5, 9, 7);
-
-        # remove first two codes
-        if ($codes[0] eq '0' && $codes[1] eq '0') {
-            splice(@codes,0,2);
-        }
-        else {
-            die "Control key input is supposed to start with 00 for Expert I: $characters.";
-        }
 
         while (@codes) {
             $key += shift(@codes) * shift(@coefficients);
