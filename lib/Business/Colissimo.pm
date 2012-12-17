@@ -893,6 +893,72 @@ sub level {
     return $self->{level};
 }
 
+=head2 level_by_amount
+
+Determines insurance level based on amount:
+
+    $colissimo->level_by_amount('300');
+
+This yields '02'.
+
+You can also get a recommendation level:
+
+    $colissimo->level_by_amount('300', 1);
+
+This yields '23'.
+
+If you exceed 400 Euro (maximum recommendation
+level) or on any international shipment, an
+insurance level will be returned, e.g.
+
+    $colissimo->level_by_amount('500', 1);
+
+yields '04'.
+
+=cut
+
+sub level_by_amount {
+    my ($self, $amount, $recommendation) = @_;
+    my ($level);
+
+    if ($amount !~ /^[0-9]+(\.[0-9]+)?$/) {
+        die 'Please provide valid amount for insurance/recommendation level.';
+    }
+
+    if ($recommendation
+        && ! $self->international
+        && $amount <= 400) {
+        if ($amount <= 50) {
+            $level = '21';
+        }
+        elsif ($amount <= 200) {
+            $level => '22';
+        }
+        else {
+            $level => '23';
+        }
+    }
+    else {
+        # insurance level (150 Euro steps)
+        $level = int($amount / 150);
+
+        if ($level == 0) {
+            # minimum
+            return '01';
+        }
+        elsif ($level >= 10) {
+            # maximum
+            return '10';
+        }
+        elsif ($amount > $level * 150) {
+            return sprintf('%02d', ($level + 1));
+        }
+        else {
+            return sprintf('%02d', $level);
+        }
+    }
+}
+
 =head2 ack_receipt
 
 Get current value for acknowledgement of receipt (AR):
