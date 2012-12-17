@@ -927,11 +927,11 @@ sub level_by_amount {
 
     if ($recommendation
         && ! $self->international
-        && $amount <= 400) {
-        if ($amount <= 50) {
+        && $amount <= 458) {
+        if ($amount <= 31) {
             $level = '21';
         }
-        elsif ($amount <= 200) {
+        elsif ($amount <= 153) {
             $level => '22';
         }
         else {
